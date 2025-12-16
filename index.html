@@ -231,7 +231,7 @@
 
         // --- 6. 照片相关 ---
         const photoGroup = new THREE.Group();
-        const photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(36, 27), new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+        const photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
         const photoBorder = new THREE.Mesh(new THREE.PlaneGeometry(37, 28), new THREE.MeshBasicMaterial({color:0xff69b4}));
         photoBorder.position.z = -0.1;
         photoGroup.add(photoPlane); photoGroup.add(photoBorder);
@@ -536,8 +536,16 @@
                 case 'POINTING': 
                     mode='photo'; 
                     if(photoImages.length) {
-                        photoPlane.material.map=photoImages[Math.floor(Math.random()*photoImages.length)];
-                        photoPlane.material.needsUpdate=true;
+                        const tex = photoImages[Math.floor(Math.random()*photoImages.length)];
+                        const img = tex.image;
+                        const aspect = img.width / img.height;
+                        const baseHeight = 27;
+                        const w = baseHeight * aspect;
+                        const h = baseHeight;
+                        photoPlane.geometry.dispose();
+                        photoPlane.geometry = new THREE.PlaneGeometry(w, h);
+                        photoPlane.material.map = tex;
+                        photoPlane.material.needsUpdate = true;
                     } else {
                         const c=document.createElement('canvas');c.width=400;c.height=300;
                         const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,400,300);
