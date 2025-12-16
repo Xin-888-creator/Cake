@@ -24,6 +24,15 @@
         }
         @keyframes floatText { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
 
+        <button id="music-btn" style="position:absolute; top:20px; right:20px; z-index:200; padding:8px 12px;">🎵 播放/暂停</button>
+        <script>
+        const btn = document.getElementById('music-btn');
+        btn.addEventListener('click', ()=>{
+            if(bgMusic.paused) bgMusic.play();
+            else bgMusic.pause();
+            });
+            </script>
+
         #ui-container {
             position: absolute; top: 120px; left: 20px; width: 260px;
             padding: 20px; 
