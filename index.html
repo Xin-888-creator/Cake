@@ -359,24 +359,6 @@ defaultPhotos.forEach(path => {
         }
     });
 });
-                 
-                for(let i=0; i<limit; i++){
-                    const r = new FileReader();
-                    r.onload = (ev) => {
-                        const img = new Image(); img.src=ev.target.result;
-                        img.onload=()=>{
-                            const t=new THREE.CanvasTexture(img); t.colorSpace=THREE.SRGBColorSpace;
-                            photoImages.push(t);
-                            loadCount++;
-                            if(loadCount === limit) {
-                                createGalleryCloud();
-                            }
-                        }
-                    };
-                    r.readAsDataURL(f[i]);
-                }
-            }
-        });
 
         // --- 7. 动画 ---
         const clock = new THREE.Clock();
