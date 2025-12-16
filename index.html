@@ -88,8 +88,6 @@
             <video id="input_video"></video>
             <div id="status-text" class="status-badge">Ready</div>
         </div>
-        <label class="file-upload" for="photo-input">📷 导入多张照片 (建议10+)</label>
-        <input type="file" id="photo-input" accept="image/*" multiple>
         <div id="gesture-info">
             ✋ <b>张开</b>：照片星系爆发<br>
             ✊ <b>握拳</b>：生日蛋糕<br>
@@ -334,12 +332,24 @@
         }
         calculateTargets('cake');
 
-        document.getElementById('photo-input').addEventListener('change', (e) => {
-            const f = e.target.files;
-            if(f.length){
-                photoImages = [];
-                let loadCount = 0;
-                const limit = Math.min(f.length, 30);
+        // --- 默认加载固定照片 ---
+        const loader = new THREE.TextureLoader();
+        const defaultPhotos = [
+            'images/photo1.jpg',
+            'images/photo2.jpg',
+            'images/photo3.jpg'
+        ];
+
+photoImages = [];
+defaultPhotos.forEach(path => {
+    loader.load(path, tex => {
+        photoImages.push(tex);
+        // 当所有照片都加载完成，生成照片星系
+        if(photoImages.length === defaultPhotos.length){
+            createGalleryCloud();
+        }
+    });
+});
                  
                 for(let i=0; i<limit; i++){
                     const r = new FileReader();
