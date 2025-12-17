@@ -144,14 +144,28 @@
             ctx.closePath(); ctx.fill();
             return new THREE.CanvasTexture(canvas);
         }
+
+        const confettiCount = 800;
+        const confettiGeo = new THREE.BufferGeometry();
+        const confettiPos = new Float32Array(confettiCount * 3);
+        // 初始化星星位置
+        for(let i=0; i < confettiCount * 3; i++) {
+            confettiPos[i] = (Math.random() - 0.5) * 250;
+        }
+        confettiGeo.setAttribute('position', new THREE.BufferAttribute(confettiPos, 3));
+
         const confettiMat = new THREE.PointsMaterial({
-            size: 2.5, // 星星大小，可调
+            size: 2.5, 
             transparent: true,
             opacity: 0.9,
             map: createConfettiTexture(),
             blending: THREE.AdditiveBlending,
             depthWrite: false
         });
+
+        // 【关键修复点】必须定义这个变量并添加到场景
+        const confettiSystem = new THREE.Points(confettiGeo, confettiMat);
+        scene.add(confettiSystem);
 
         // --- 3. 粒子系统（蛋糕装饰）---
         const totalParticles = 2400;
