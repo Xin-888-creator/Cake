@@ -590,8 +590,9 @@ defaultPhotos.forEach(path => {
         const cam = new Camera(videoElement, {onFrame: async()=>{await hands.send({image:videoElement})}, width:320, height:240});
         cam.start();
 
-        const bgMusic = new Audio('music.mp3');
+        const bgMusic = new Audio('终会与你同行.m4a');
         bgMusic.loop = true;
+        bgMusic.volume = 0.5;
         const btn = document.getElementById('music-btn');
         btn.addEventListener('click', () => {
             if (bgMusic.paused) bgMusic.play();
