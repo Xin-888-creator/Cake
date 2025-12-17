@@ -125,23 +125,33 @@
 
         // --- 2. 雪花（改为彩屑粒子）---
         function createConfettiTexture() {
-            const canvas = document.createElement('canvas'); canvas.width = 64; canvas.height = 64;
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = ['#ff69b4','#ffff00','#00ffff','#ff00ff'][Math.floor(Math.random()*4)];
-            ctx.fillRect(10,10,44,44);
+            const colors = ['#ffffff','#ffffaa','#ffccff','#ffd700'];
+            ctx.fillStyle = colors[Math.floor(Math.random()*colors.length)];
+            const cx=32, cy=32, spikes=5, outerRadius=20, innerRadius=8;
+            let rot=Math.PI/2*3;
+            const step=Math.PI/spikes;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for(let i=0;i<spikes;i++){
+                ctx.lineTo(cx + Math.cos(rot)*outerRadius, cy + Math.sin(rot)*outerRadius);
+                rot+=step;
+                ctx.lineTo(cx + Math.cos(rot)*innerRadius, cy + Math.sin(rot)*innerRadius);
+                rot+=step;
+            }
+            ctx.closePath(); ctx.fill();
             return new THREE.CanvasTexture(canvas);
         }
-        const confettiCount = 800;
-        const confettiGeo = new THREE.BufferGeometry();
-        const confettiPos = new Float32Array(confettiCount * 3);
-        for(let i=0;i<confettiCount*3;i++) confettiPos[i] = (Math.random()-0.5)*250;
-        confettiGeo.setAttribute('position', new THREE.BufferAttribute(confettiPos, 3));
         const confettiMat = new THREE.PointsMaterial({
-            size: 4.5, transparent: true, opacity: 0.9,
-            map: createConfettiTexture(), blending: THREE.AdditiveBlending, depthWrite: false
+            size: 2.5, // 星星大小，可调
+            transparent: true,
+            opacity: 0.9,
+            map: createConfettiTexture(),
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
         });
-        const confettiSystem = new THREE.Points(confettiGeo, confettiMat);
-        scene.add(confettiSystem);
 
         // --- 3. 粒子系统（蛋糕装饰）---
         const totalParticles = 2400;
@@ -509,9 +519,10 @@ defaultPhotos.forEach(path => {
             for(let i=0; i<confettiCount; i++){
                 cp[i*3+1] -= 0.35; 
                 if(cp[i*3+1]<-100) cp[i*3+1]=100;
+                cp[i*3+0] += Math.sin(clock.getElapsedTime() + i) * 0.02;
+                cp[i*3+2] += Math.cos(clock.getElapsedTime() + i) * 0.02;
             }
             confettiSystem.geometry.attributes.position.needsUpdate=true;
-
             renderer.render(scene, camera);
         }
         animate();
